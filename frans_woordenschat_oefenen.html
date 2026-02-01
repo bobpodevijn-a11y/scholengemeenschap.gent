@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frans Woordenschat Oefenen</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const vocabularyData = {
+            "En route 1": {
+                substantifs: [
+                    { fr: "une braderie", nl: "een braderij, een jaarmarkt", example: "Chaque année, on organise une grande braderie dans notre ville." },
+                    { fr: "une cathédrale", nl: "een kathedraal", example: "Les villes comme Bruxelles, Anvers, Paris ont toutes une cathédrale" },
+                    { fr: "un citytrip", nl: "een citytrip", example: "Chaque année, nous faisons un citytrip en famille." },
+                    { fr: "la grand-place", nl: "de grote markt", example: "L'hôtel de ville se trouve sur la grand-place" },
+                    { fr: "un musée", nl: "een museum", example: "Cet après-midi, nous avons réservé une visite guidée dans un musée sur l'impressionnisme." },
+                    { fr: "un palais", nl: "een paleis", example: "Le roi et sa famille vivent dans un palais" },
+                    { fr: "un parc", nl: "een park", example: "Autour du palais, il y a un parc ouvert au public." },
+                    { fr: "un stade", nl: "een stadion", example: "On va construire un stade plus moderne pour l'équipe nationale." },
+                    { fr: "une statue", nl: "een standbeeld", example: "Sur la place, on a installé une statue d'un citoyen célèbre." },
+                    { fr: "une vue", nl: "een zicht", example: "Sur la tour Eiffel, on a une vue magnifique sur la ville." }
+                ],
+                adjectifs: [
+                    { fr: "déçu(e)", nl: "teleurgesteld", example: "Les enfants sont déçus parce qu'ils ne vont pas à Disneyland." },
+                    { fr: "enthousiaste", nl: "enthousiast", example: "Maman est enthousiaste car on fera un citytrip en famille." },
+                    { fr: "incontournable", nl: "niet te missen", example: "Si tu es à Paris, une visite du musée d'Orsay est incontournable" },
+                    { fr: "négatif/négative", nl: "negatief", example: "La réaction des élèves était très négative" },
+                    { fr: "positif/positive", nl: "positief", example: "Les dernières critiques sont très positives" },
+                    { fr: "surprenant(e)", nl: "verrassend", example: "Le gout de cette tarte est vraiment surprenant" }
+                ],
+                verbes: [
+                    { fr: "flâner", nl: "slenteren", example: "La plupart des touristes aiment flâner dans les rues de la ville." },
+                    { fr: "visiter", nl: "bezoeken", example: "Pour visiter ce musée, il faut faire une réservation." }
+                ],
+                pronoms: [
+                    { fr: "aucun ne/aucune ne", nl: "geen enkel(e)", example: "Tous les musées sont fermés? - Oui, aucun n'est ouvert." },
+                    { fr: "certains/certaines", nl: "sommige", example: "Tu as aimé les peintures? - Certaines, mais pas toutes." },
+                    { fr: "chacun/chacune", nl: "elk", example: "Les élèves ont apprécié la visite guidée? - Oui, chacun était content." },
+                    { fr: "plusieurs", nl: "meerdere", example: "Tes copains ont déjà fait un citytrip? - Plusieurs ont déjà visité Paris." },
+                    { fr: "quelques-uns/quelques-unes", nl: "enkele", example: "Toutes les filles veulent faire du shopping? - Non, seulement quelques-unes." },
+                    { fr: "tous/toutes", nl: "alle", example: "Tous les élèves participent à l'excursion? Oui, tous." },
+                    { fr: "tout", nl: "alles", example: "Tu veux suivre tout le programme? Oui, j'aimerais voir tout" }
+                ],
+                expressions: [
+                    { fr: "faire un citytrip", nl: "een citytrip maken", example: "Pour leur anniversaire de mariage, mes parents font un citytrip" }
+                ]
+            },
+            "En route 2": {
+                substantifs: [
+                    { fr: "un architecte", nl: "een architect", example: "Tu connais le nom de l'architecte de ce monument?" },
+                    { fr: "l'art (m.)", nl: "de kunst", example: "Dans ce musée, on présente surtout de l'art moderne." },
+                    { fr: "une attraction", nl: "een attractie", example: "Quelle attraction veux-tu absolument voir?" },
+                    { fr: "une basilique", nl: "een basiliek", example: "À Bruxelles, on peut visiter la basilique de Koekelberg." },
+                    { fr: "une boite des spams / une boite de courrier indésirable", nl: "de spambox", example: "Attention! Certains messages vont directement dans la boite des spams" },
+                    { fr: "un centre commercial", nl: "een winkelcentrum", example: "Dans un centre commercial, on peut trouver des magasins en tout genre." },
+                    { fr: "un château", nl: "een kasteel", example: "Louis XIV a fait construire le château de Versailles." },
+                    { fr: "une confirmation", nl: "een bevestiging", example: "Quand on fait une réservation, on reçoit souvent une confirmation dans les 24 heures." },
+                    { fr: "une curiosité", nl: "een bezienswaardighed", example: "Pendant un citytrip, on ne peut pas voir toutes les curiosités touristiques d'une ville." },
+                    { fr: "les données (f.)", nl: "de gegevens", example: "Vous trouverez toutes les données nécessaires sur votre bon de réservation." },
+                    { fr: "les environs (m.)", nl: "de omgeving", example: "Dans les environs des Champs-Élysées, il y a des restaurants connus." },
+                    { fr: "le lieu du rendez-vous", nl: "de afspraakplaats", example: "Vous trouvez le lieu du rendez-vous sur votre bon de réservation." },
+                    { fr: "un message", nl: "een bericht", example: "Le guide nous a envoyé un message, il arrivera 5 minutes plus tard." },
+                    { fr: "un numéro de réservation", nl: "een reservatienummer", example: "Pour changer l'heure de l'activité, j'ai besoin d'un numéro de réservation" },
+                    { fr: "un participant", nl: "deelnemers", example: "Sur le formulaire, il faut noter le nombre de participants" },
+                    { fr: "une réservation", nl: "een reservatie", example: "Tout est en ordre. Naija s'est occupée de la réservation" }
+                ],
+                adjectifs: [
+                    { fr: "célèbre", nl: "beroemd, bekend", example: "La tour Eiffel est le monument le plus célèbre à Paris." },
+                    { fr: "panoramique", nl: "panoramisch", example: "De la place devant le Sacré-Cœur, on a une vue panoramique sur la ville de Paris." },
+                    { fr: "supplémentaire", nl: "bijkomend", example: "On est trop nombreux. On va faire une réservation supplémentaire" }
+                ],
+                verbes: [
+                    { fr: "ajouter", nl: "toevoegen", example: "Il faut ajouter l'oncle Adrien à la liste. Il va aussi participer." },
+                    { fr: "annuler", nl: "annuleren", example: "L'activité n'aura pas lieu. Il faudra l'annuler" },
+                    { fr: "consulter", nl: "checken", example: "Il est important que vous consultiez également votre courrier indésirable." },
+                    { fr: "contacter", nl: "contacteren", example: "En cas de problème, n'hésitez pas à nous contacter" },
+                    { fr: "envoyer", nl: "opsturen", example: "On va vous envoyer la confirmation par mail." },
+                    { fr: "réserver", nl: "reserveren", example: "Faut-il réserver les tickets à l'avance?" },
+                    { fr: "retirer de", nl: "weghalen uit", example: "Malheureusement, l'oncle Adrien ne pourra pas participer. Il faut le retirer de la liste." },
+                    { fr: "vérifier", nl: "nagaan, checken", example: "Si on n'est pas sûr, il vaut mieux vérifier pour éviter les erreurs." }
+                ],
+                expressions: [
+                    { fr: "en retard", nl: "te laat", example: "Nabil arrive souvent en retard. On va lui acheter une montre!" }
+                ]
+            },
+            "En route 3": {
+                substantifs: [
+                    { fr: "une balade", nl: "een wandeling, een tocht", example: "Pour découvrir une ville, il faut faire une balade à pied." },
+                    { fr: "une capitale", nl: "een hoofdstad", example: "Quelle est la capitale de la France? - Paris bien sûr!" },
+                    { fr: "une chasse au trésor", nl: "een schattenjacht", example: "Quelle idée originale d'organiser une chasse au trésor pour les enfants!" },
+                    { fr: "une dégustation", nl: "een proeverij", example: "Pendant la promenade, nous avons visité une boulangerie pour une dégustation" },
+                    { fr: "un indice", nl: "een aanwijzing", example: "Dans une chambre d'évasion, tu dois faire attention à chaque indice" },
+                    { fr: "un parcours", nl: "een parcours, een route", example: "Suivez le parcours qui est indiqué sur la carte!" },
+                    { fr: "un photomaton", nl: "een fotomaat", example: "J'ai besoin d'une photo pour ma carte d'identité. - Ah voilà, un photomaton" },
+                    { fr: "un secret", nl: "een geheim", example: "Tu ne peux rien raconter aux autres. C'est un secret" },
+                    { fr: "une trottinette", nl: "een step", example: "Une nouvelle manière pour découvrir la ville, c'est de faire une balade en trottinette électrique." }
+                ],
+                adjectifs: [
+                    { fr: "couvert(e)", nl: "bedekt, overdekt", example: "Ce magasin se trouve dans ce passage couvert" },
+                    { fr: "digital(e)", nl: "digitaal", example: "Avec mon GSM, je peux prendre des photos digitales" },
+                    { fr: "guidé(e)", nl: "begeleid", example: "Vous préférez une visite libre ou une visite guidée?" },
+                    { fr: "gourmand(e)", nl: "lekkerbek", example: "Les Belges aiment manger, ils sont gourmands" },
+                    { fr: "insolite", nl: "ongebruikelijk", example: "Une balade en trottinette? - C'est une manière insolite pour explorer une ville." },
+                    { fr: "méconnu(e)", nl: "niet erkend", example: "On n'apprécie pas cet artiste. Il est méconnu du public." },
+                    { fr: "savoureux/savoureuse", nl: "lekker", example: "Quel plat savoureux! C'est délicieux!" },
+                    { fr: "secret/secrète", nl: "geheim", example: "Pendant la promenade, nous avons découvert quelques lieux secrets" },
+                    { fr: "unique", nl: "uniek, enig", example: "La Joconde? C'est une peinture unique" },
+                    { fr: "végane", nl: "veganistisch", example: "Elle ne mange plus de viande, elle préfère un repas végane" },
+                    { fr: "vintage", nl: "vintage, oud", example: "Plusieurs jeunes aiment les vêtements vintages" }
+                ],
+                verbes: [
+                    { fr: "découvrir", nl: "ontdekken", example: "J'aimerais découvrir la culture de la population locale." },
+                    { fr: "explorer", nl: "verkennen", example: "Commençons par explorer la ville." },
+                    { fr: "inspirer", nl: "inspireren, inspiratie geven", example: "Tes idées peuvent inspirer les autres." },
+                    { fr: "redécouvrir", nl: "herontdekken", example: "Il y a 15 ans, j'ai visité la ville de Paris. Maintenant, je veux redécouvrir la ville." },
+                    { fr: "s'évader", nl: "ontsnappen", example: "Pour s'évader de la routine de tous les jours, on peut faire un citytrip." },
+                    { fr: "se tromper", nl: "zich vergissen", example: "Le prof se trompe de chemin. On doit tourner à droite, pas à gauche." },
+                    { fr: "suivre", nl: "volgen", example: "Si tu fais une visite guidée, tu dois suivre le guide." },
+                    { fr: "trottiner", nl: "met de step rijden", example: "C'était une expérience unique de trottiner à travers la ville." }
+                ]
+            },
+            "En route 4": {
+                substantifs: [
+                    { fr: "une amende", nl: "een boete", example: "Cet homme n'avait pas de billet valable: il devait payer une amende" },
+                    { fr: "un appartement", nl: "een appartement", example: "Quel est le prix d'un appartement dans le centre de Paris?" },
+                    { fr: "un arrêt", nl: "een halte", example: "On doit descendre du métro à l'arrêt suivant." },
+                    { fr: "une auberge de jeunesse", nl: "een jeugdherberg", example: "Avec le mouvement de jeunesse, nous logeons toujours dans une auberge de jeunesse" },
+                    { fr: "un camping", nl: "een camping", example: "Je ne sais pas s'il y a un camping dans les environs de Paris." },
+                    { fr: "une caravane", nl: "een caravan", example: "Sur ce camping, on ne peut pas louer une place pour une caravane" },
+                    { fr: "une chambre d'hôtes", nl: "een bed and breakfast", example: "Combien de chambres y a-t-il dans cette chambre d'hôtes?" },
+                    { fr: "un contrôleur", nl: "een controleur", example: "Le contrôleur monte dans le métro pour contrôler les billets des voyageurs." },
+                    { fr: "une correspondance", nl: "een aansluiting", example: "À l'arrêt suivant, on doit descendre et prendre une correspondance sur la ligne 8." },
+                    { fr: "une direction", nl: "een richting", example: "Oups! Ce métro roule dans l'autre direction" },
+                    { fr: "une flèche", nl: "een pijl", example: "La flèche indique la direction du métro." },
+                    { fr: "une gare", nl: "een station (trein)", example: "Beaucoup de touristes arrivent à la gare du Nord à Paris." },
+                    { fr: "une heure creuse", nl: "een daluur", example: "J'essaie de prendre le métro à une heure creuse, quand il n'y a pas beaucoup de monde." },
+                    { fr: "une heure de pointe", nl: "een spitsuur", example: "Le samedi après-midi, dans le métro, c'est vraiment l'heure de pointe!" },
+                    { fr: "un hôtel", nl: "een hotel", example: "Cherchons un hôtel simple mais confortable pour la famille!" },
+                    { fr: "un itinéraire", nl: "een reisweg", example: "Regarde le plan: je vous explique l'itinéraire" },
+                    { fr: "une ligne", nl: "een lijn", example: "Combien de lignes de métro y a-t-il à Paris?" },
+                    { fr: "une maison (de vacances)", nl: "een (vakantie)huis", example: "En été, notre famille loue toujours une maison de vacances en Provence." },
+                    { fr: "un mobile home", nl: "een mobilhome", example: "Pour traverser un pays, il vaut mieux prendre un mobile home" },
+                    { fr: "un panneau", nl: "een paneel, een plaat", example: "Sur ce panneau, tu peux voir combien de stations il y a sur cette ligne." },
+                    { fr: "un plan", nl: "een plan", example: "Dans l'office de tourisme, on peut demander un plan de la ville." },
+                    { fr: "un séjour", nl: "een verblijf", example: "Nous avons réservé un séjour de 4 jours." },
+                    { fr: "une station", nl: "een station (metro)", example: "À quelle station est-ce qu'on doit descendre pour voir la tour Eiffel?" },
+                    { fr: "une tente", nl: "een tent", example: "Mon frère n'aime pas les citytrips. Il préfère dormir sous une tente en pleine nature." },
+                    { fr: "un terminus", nl: "een eindstation", example: "Pour connaitre la direction du métro, contrôle toujours le terminus" },
+                    { fr: "un trajet", nl: "een traject", example: "Prépare d'abord le trajet à suivre avant de partir." }
+                ],
+                adjectifs: [
+                    { fr: "bon marché (invariable)", nl: "goedkoop", example: "En général, une auberge de jeunesse est bon marché" },
+                    { fr: "cher/chère", nl: "duur", example: "C'est un hôtel à 4 étoiles: une chambre est donc assez chère" },
+                    { fr: "efficace", nl: "efficiënt", example: "Le métro est un moyen de transport très efficace dans une grande ville." },
+                    { fr: "meilleur marché (invariable)", nl: "goedkoper", example: "Est-ce qu'une chambre d'hôtes est meilleur marché qu'un hôtel?" }
+                ],
+                verbes: [
+                    { fr: "descendre", nl: "afstappen", example: "Au prochain arrêt, nous devons descendre" },
+                    { fr: "monter", nl: "opstappen", example: "Aux heures de pointe, il n'est pas facile de monter dans le métro." },
+                    { fr: "rater", nl: "missen", example: "Dépêchons-nous pour ne pas rater notre correspondance." },
+                    { fr: "traverser", nl: "doorlopen, doorkruisen", example: "En métro, on peut traverser toute la ville en peu de temps." }
+                ],
+                expressions: [
+                    { fr: "être en fraude", nl: "in overtreding zijn", example: "Si tu ne paies pas pour un billet, tu es en fraude" }
+                ]
+            }
+        };
+
+        function FrenchVocabApp() {
+            const [mode, setMode] = useState('menu');
+            const [selectedRoute, setSelectedRoute] = useState('');
+            const [selectedCategory, setSelectedCategory] = useState('');
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [showAnswer, setShowAnswer] = useState(false);
+            const [userInput, setUserInput] = useState('');
+            const [score, setScore] = useState({ correct: 0, total: 0 });
+            const [shuffledWords, setShuffledWords] = useState([]);
+            const [feedback, setFeedback] = useState('');
+            const [options, setOptions] = useState([]);
+
+            const getAllWords = () => {
+                if (!selectedRoute || !selectedCategory) return [];
+                const route = vocabularyData[selectedRoute];
+                return route[selectedCategory] || [];
+            };
+
+            const startMode = (newMode) => {
+                const words = getAllWords();
+                if (words.length === 0) return;
+                
+                const shuffled = [...words].sort(() => Math.random() - 0.5);
+                setShuffledWords(shuffled);
+                setCurrentIndex(0);
+                setShowAnswer(false);
+                setUserInput('');
+                setScore({ correct: 0, total: 0 });
+                setFeedback('');
+                setMode(newMode);
+            };
+
+            const currentWord = shuffledWords[currentIndex];
+
+            const handleNext = () => {
+                if (currentIndex < shuffledWords.length - 1) {
+                    setCurrentIndex(currentIndex + 1);
+                    setShowAnswer(false);
+                    setUserInput('');
+                    setFeedback('');
+                }
+            };
+
+            const handlePrevious = () => {
+                if (currentIndex > 0) {
+                    setCurrentIndex(currentIndex - 1);
+                    setShowAnswer(false);
+                    setUserInput('');
+                    setFeedback('');
+                }
+            };
+
+            const normalizeText = (text) => {
+                return text
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9]/g, '')
+                    .trim();
+            };
+
+            const checkAnswer = () => {
+                const normalized = normalizeText(userInput);
+                const possibleAnswers = currentWord.nl.split(',').map(a => normalizeText(a));
+                
+                const isCorrect = possibleAnswers.some(answer => normalized.includes(answer) || answer.includes(normalized));
+                
+                setScore({
+                    correct: score.correct + (isCorrect ? 1 : 0),
+                    total: score.total + 1
+                });
+                
+                setFeedback(isCorrect ? 'correct' : 'incorrect');
+                
+                setTimeout(() => {
+                    if (currentIndex < shuffledWords.length - 1) {
+                        handleNext();
+                    } else {
+                        setMode('results');
+                    }
+                }, 1500);
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter' && userInput.trim()) {
+                    checkAnswer();
+                }
+            };
+
+            useEffect(() => {
+                if (mode === 'multipleChoice' && currentWord) {
+                    const otherWords = shuffledWords
+                        .filter((w) => w.fr !== currentWord.fr)
+                        .sort(() => Math.random() - 0.5)
+                        .slice(0, 3);
+                    const allOptions = [currentWord, ...otherWords]
+                        .sort(() => Math.random() - 0.5);
+                    setOptions(allOptions);
+                }
+            }, [currentIndex, mode, currentWord, shuffledWords]);
+
+            if (mode === 'menu') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+                        <div className="max-w-4xl mx-auto">
+                            <h1 className="text-4xl font-bold text-center mb-2 text-indigo-900">Frans Woordenschat Oefenen</h1>
+                            <p className="text-center text-gray-600 mb-8">Kies een module en categorie om te starten</p>
+                            
+                            <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+                                <h2 className="text-xl font-semibold mb-4">Selecteer Module</h2>
+                                <div className="grid grid-cols-2 gap-3 mb-6">
+                                    {Object.keys(vocabularyData).map((route) => (
+                                        <button
+                                            key={route}
+                                            onClick={() => setSelectedRoute(route)}
+                                            className={`h-auto py-4 px-4 rounded-lg border-2 transition-all ${
+                                                selectedRoute === route
+                                                    ? 'bg-indigo-600 text-white border-indigo-600'
+                                                    : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-400'
+                                            }`}
+                                        >
+                                            {route}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {selectedRoute && (
+                                    <>
+                                        <h2 className="text-xl font-semibold mb-4">Selecteer Categorie</h2>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {Object.keys(vocabularyData[selectedRoute]).map((category) => {
+                                                const count = vocabularyData[selectedRoute][category].length;
+                                                return (
+                                                    <button
+                                                        key={category}
+                                                        onClick={() => setSelectedCategory(category)}
+                                                        className={`h-auto py-4 px-4 rounded-lg border-2 transition-all ${
+                                                            selectedCategory === category
+                                                                ? 'bg-indigo-600 text-white border-indigo-600'
+                                                                : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-400'
+                                                        }`}
+                                                    >
+                                                        <div className="text-left w-full">
+                                                            <div className="font-semibold capitalize">{category}</div>
+                                                            <div className="text-xs opacity-75">{count} woorden</div>
+                                                        </div>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            {selectedRoute && selectedCategory && (
+                                <div className="bg-white rounded-lg shadow-lg p-6">
+                                    <h2 className="text-xl font-semibold mb-4">Kies Oefentype</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <button
+                                            onClick={() => startMode('flashcards')}
+                                            className="h-24 text-lg flex flex-col items-center justify-center gap-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
+                                        >
+                                            <span className="text-2xl">📚</span>
+                                            Flashcards
+                                        </button>
+                                        <button
+                                            onClick={() => startMode('fillIn')}
+                                            className="h-24 text-lg flex flex-col items-center justify-center gap-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
+                                        >
+                                            <span className="text-2xl">✏️</span>
+                                            Invuloefening
+                                        </button>
+                                        <button
+                                            onClick={() => startMode('multipleChoice')}
+                                            className="h-24 text-lg flex flex-col items-center justify-center gap-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
+                                        >
+                                            <span className="text-2xl">📋</span>
+                                            Meerkeuze
+                                        </button>
+                                        <button
+                                            onClick={() => startMode('exampleContext')}
+                                            className="h-24 text-lg flex flex-col items-center justify-center gap-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all"
+                                        >
+                                            <span className="text-2xl">🔀</span>
+                                            Context Voorbeelden
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'flashcards') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+                        <div className="max-w-2xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="px-4 py-2 bg-white rounded-lg border border-gray-300 hover:bg-gray-50">
+                                    ← Terug naar menu
+                                </button>
+                                <div className="text-sm text-gray-600">
+                                    {currentIndex + 1} / {shuffledWords.length}
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-lg p-12 mb-6 cursor-pointer" onClick={() => setShowAnswer(!showAnswer)}>
+                                <div className="text-center">
+                                    <div className="text-3xl font-bold text-indigo-900 mb-4">
+                                        {currentWord.fr}
+                                    </div>
+                                    {showAnswer && (
+                                        <>
+                                            <div className="text-2xl text-gray-700 mb-4">
+                                                {currentWord.nl}
+                                            </div>
+                                            <div className="text-sm text-gray-600 italic border-t pt-4 mt-4">
+                                                {currentWord.example}
+                                            </div>
+                                        </>
+                                    )}
+                                    {!showAnswer && (
+                                        <div className="text-gray-400 text-sm mt-8">
+                                            Klik om het antwoord te zien
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex gap-4">
+                                <button
+                                    onClick={handlePrevious}
+                                    disabled={currentIndex === 0}
+                                    className="flex-1 py-3 px-6 bg-white rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    ← Vorige
+                                </button>
+                                <button
+                                    onClick={handleNext}
+                                    disabled={currentIndex === shuffledWords.length - 1}
+                                    className="flex-1 py-3 px-6 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Volgende →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'fillIn') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+                        <div className="max-w-2xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="px-4 py-2 bg-white rounded-lg border border-gray-300 hover:bg-gray-50">
+                                    ← Terug naar menu
+                                </button>
+                                <div className="text-sm text-gray-600">
+                                    Score: {score.correct} / {score.total} ({shuffledWords.length - score.total} te gaan)
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+                                <div className="mb-6">
+                                    <div className="text-xl font-semibold text-gray-700 mb-2">
+                                        Vertaal naar het Nederlands:
+                                    </div>
+                                    <div className="text-3xl font-bold text-indigo-900 mb-6">
+                                        {currentWord.fr}
+                                    </div>
+                                    <div className="text-sm text-gray-600 italic mb-6">
+                                        Context: {currentWord.example}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <input
+                                        type="text"
+                                        value={userInput}
+                                        onChange={(e) => setUserInput(e.target.value)}
+                                        onKeyPress={handleKeyPress}
+                                        placeholder="Typ het Nederlandse woord..."
+                                        className="w-full text-lg p-4 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
+                                        disabled={feedback !== ''}
+                                    />
+
+                                    {feedback === 'correct' && (
+                                        <div className="bg-green-100 border-2 border-green-400 text-green-700 px-4 py-3 rounded-lg flex items-center">
+                                            <span className="mr-2">✓</span>
+                                            Juist! {currentWord.nl}
+                                        </div>
+                                    )}
+
+                                    {feedback === 'incorrect' && (
+                                        <div className="bg-red-100 border-2 border-red-400 text-red-700 px-4 py-3 rounded-lg flex items-center">
+                                            <span className="mr-2">✗</span>
+                                            Helaas, het juiste antwoord was: {currentWord.nl}
+                                        </div>
+                                    )}
+
+                                    {feedback === '' && (
+                                        <button
+                                            onClick={checkAnswer}
+                                            disabled={!userInput.trim()}
+                                            className="w-full text-lg py-6 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            Controleer
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'multipleChoice') {
+                const handleOptionClick = (option) => {
+                    const isCorrect = option.fr === currentWord.fr;
+                    setScore({
+                        correct: score.correct + (isCorrect ? 1 : 0),
+                        total: score.total + 1
+                    });
+                    setFeedback(isCorrect ? 'correct' : 'incorrect');
+                    
+                    setTimeout(() => {
+                        if (currentIndex < shuffledWords.length - 1) {
+                            handleNext();
+                        } else {
+                            setMode('results');
+                        }
+                    }, 1500);
+                };
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+                        <div className="max-w-2xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="px-4 py-2 bg-white rounded-lg border border-gray-300 hover:bg-gray-50">
+                                    ← Terug naar menu
+                                </button>
+                                <div className="text-sm text-gray-600">
+                                    Score: {score.correct} / {score.total} ({shuffledWords.length - score.total} te gaan)
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+                                <div className="mb-6">
+                                    <div className="text-xl font-semibold text-gray-700 mb-2">
+                                        Welk Frans woord betekent:
+                                    </div>
+                                    <div className="text-3xl font-bold text-indigo-900 mb-6">
+                                        {currentWord.nl}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    {options.map((option, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => handleOptionClick(option)}
+                                            disabled={feedback !== ''}
+                                            className={`w-full text-lg py-6 px-6 rounded-lg border-2 transition-all ${
+                                                feedback === 'correct' && option.fr === currentWord.fr
+                                                    ? 'bg-green-100 border-green-400'
+                                                    : feedback === 'incorrect' && option.fr === currentWord.fr
+                                                    ? 'bg-green-100 border-green-400'
+                                                    : 'bg-white border-gray-300 hover:border-indigo-400'
+                                            } disabled:cursor-not-allowed`}
+                                        >
+                                            {option.fr}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {feedback === 'correct' && (
+                                    <div className="mt-4 bg-green-100 border-2 border-green-400 text-green-700 px-4 py-3 rounded-lg flex items-center">
+                                        <span className="mr-2">✓</span>
+                                        Juist!
+                                    </div>
+                                )}
+
+                                {feedback === 'incorrect' && (
+                                    <div className="mt-4 bg-red-100 border-2 border-red-400 text-red-700 px-4 py-3 rounded-lg flex items-center">
+                                        <span className="mr-2">✗</span>
+                                        Helaas, het juiste antwoord was: {currentWord.fr}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'exampleContext') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+                        <div className="max-w-2xl mx-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => setMode('menu')} className="px-4 py-2 bg-white rounded-lg border border-gray-300 hover:bg-gray-50">
+                                    ← Terug naar menu
+                                </button>
+                                <div className="text-sm text-gray-600">
+                                    Score: {score.correct} / {score.total} ({shuffledWords.length - score.total} te gaan)
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
+                                <div className="mb-6">
+                                    <div className="text-xl font-semibold text-gray-700 mb-4">
+                                        Vul het juiste woord in:
+                                    </div>
+                                    <div className="text-lg text-gray-800 mb-6 leading-relaxed">
+                                        {currentWord.example}
+                                    </div>
+                                    <div className="text-sm text-gray-500">
+                                        Hint: {currentWord.nl}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <input
+                                        type="text"
+                                        value={userInput}
+                                        onChange={(e) => setUserInput(e.target.value)}
+                                        onKeyPress={handleKeyPress}
+                                        placeholder="Typ het Franse woord..."
+                                        className="w-full text-lg p-4 border-2 border-gray-300 rounded-lg focus:border-indigo-500 focus:outline-none"
+                                        disabled={feedback !== ''}
+                                    />
+
+                                    {feedback === 'correct' && (
+                                        <div className="bg-green-100 border-2 border-green-400 text-green-700 px-4 py-3 rounded-lg flex items-center">
+                                            <span className="mr-2">✓</span>
+                                            Juist! {currentWord.fr}
+                                        </div>
+                                    )}
+
+                                    {feedback === 'incorrect' && (
+                                        <div className="bg-red-100 border-2 border-red-400 text-red-700 px-4 py-3 rounded-lg flex items-center">
+                                            <span className="mr-2">✗</span>
+                                            Helaas, het juiste antwoord was: {currentWord.fr}
+                                        </div>
+                                    )}
+
+                                    {feedback === '' && (
+                                        <button
+                                            onClick={checkAnswer}
+                                            disabled={!userInput.trim()}
+                                            className="w-full text-lg py-6 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            Controleer
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (mode === 'results') {
+                const percentage = Math.round((score.correct / score.total) * 100);
+                
+                return (
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+                        <div className="max-w-2xl mx-auto">
+                            <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+                                <h2 className="text-3xl font-bold mb-6 text-indigo-900">Resultaten</h2>
+                                
+                                <div className="mb-8">
+                                    <div className="text-6xl font-bold text-indigo-600 mb-2">
+                                        {percentage}%
+                                    </div>
+                                    <div className="text-xl text-gray-600">
+                                        {score.correct} van {score.total} correct
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <button
+                                        onClick={() => startMode('flashcards')}
+                                        className="w-full text-lg py-6 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                                    >
+                                        🔄 Opnieuw oefenen
+                                    </button>
+                                    <button
+                                        onClick={() => setMode('menu')}
+                                        className="w-full text-lg py-6 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50"
+                                    >
+                                        Terug naar menu
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        }
+
+        ReactDOM.render(<FrenchVocabApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
